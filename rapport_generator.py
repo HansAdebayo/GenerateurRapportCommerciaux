@@ -222,7 +222,7 @@ def ajouter_section(doc, excel_path, titre, df, graphique, commercial, mois, ann
     ajouter_tableau(doc, df, exclure=['lien'])
     doc.add_paragraph()
     if graphique:
-        sheet = next((s for t, s, g in PARTIES if t == titre), None)
+        sheet = next((s for t, s, g in PARTIES if t in titre), None)
         if sheet:
             img_nb = os.path.join(img_dir, f"{sanitize_filename(commercial)}_{sanitize_filename(titre)}.png")
             creer_graphique_global(excel_path, sheet, commercial, img_nb)
