@@ -77,9 +77,6 @@ def charger_donnees(excel_path, mois_cible, annee_cible, jour_debut=None, jour_f
     return data_by_part
 
 def ajouter_page_de_garde(doc, nom_commercial, jour_debut, jour_fin, mois, annee, logo_path=None):
-    doc.add_paragraph()
-    if logo_path and os.path.exists(logo_path):
-        doc.add_picture(logo_path, width=Inches(2))
     doc.add_heading("RAPPORT COMMERCIAL", level=0)
     doc.add_paragraph(f"Entreprise : Watt&Co Ingénierie")
     doc.add_paragraph(f"Commercial : {nom_commercial}")
