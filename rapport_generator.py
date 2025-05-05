@@ -76,32 +76,46 @@ def charger_donnees(excel_path, mois_cible, annee_cible, jour_debut=None, jour_f
         data_by_part[titre] = dict(tuple(df_filtre.groupby(col_com)))
     return data_by_part
 
-from docx.enum.section import WD_SECTION
+
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 def ajouter_page_de_garde(doc, nom_commercial, jour_debut, jour_fin, mois, annee, logo_path=None):
+    # Supprimer tout contenu existant pour partir d'une page vierge
+    doc._body.clear_content()
+
     section = doc.sections[0]
-    section.different_first_page_header_footer = True  # active entête/pied différent pour la 1ère page
+    section.start_type
 
-    # --- PAGE DE GARDE ---
     if logo_path and os.path.exists(logo_path):
-        doc.add_picture(logo_path, width=Inches(2))
+        p_logo = doc.add_paragraph()
+        run = p_logo.add_run()
+        run.add_picture(logo_path, width=Inches(2))
+        p_logo.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
 
-    titre = doc.add_paragraph("RAPPORT COMMERCIAL")
-    titre.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    run = titre.runs[0]
+    # Titre centré et en gras
+    p_titre = doc.add_paragraph()
+    run = p_titre.add_run("RAPPORT COMMERCIAL")
     run.bold = True
-    run.font.size = Pt(20)
+    run.font.size = Pt(24)
+    p_titre.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-    doc.add_paragraph(f"Entreprise : Watt&Co Ingénierie")
-    doc.add_paragraph(f"Commercial : {nom_commercial}")
+    # Informations principales
+    p_info = doc.add_paragraph()
+    p_info.add_run("\nEntreprise : ").bold = True
+    p_info.add_run("Watt&Co Ingénierie\n")
+    p_info.add_run("Commercial : ").bold = True
+    p_info.add_run(f"{nom_commercial}\n")
+    p_info.add_run("Période : ").bold = True
     mois_nom = datetime(annee, mois, 1).strftime('%B')
-    doc.add_paragraph(f"Période : du {jour_debut} au {jour_fin} {mois_nom} {annee}")
-    doc.add_paragraph("Contenu du rapport :")
+    p_info.add_run(f"du {jour_debut} au {jour_fin} {mois_nom} {annee}\n")
+
+    # Liste du contenu
+    doc.add_paragraph("\nContenu du rapport :", style="Intense Quote")
     for titre, _, _ in PARTIES:
         doc.add_paragraph(f"• {titre}", style="List Bullet")
 
-    # --- INSERTION D’UNE NOUVELLE SECTION (plus qu’un saut de page) ---
-    doc.add_section(WD_SECTION.NEW_PAGE)
+    doc.add_page_break()
+
 
 
 
