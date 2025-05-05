@@ -227,13 +227,15 @@ def ajouter_section(doc, excel_path, titre, df, graphique, commercial, mois, ann
             img_nb = os.path.join(img_dir, f"{sanitize_filename(commercial)}_{sanitize_filename(titre)}.png")
             creer_graphique_global(excel_path, sheet, commercial, img_nb)
             if os.path.exists(img_nb):
+                print("Vérif image NOMBRE :", img_nb, os.path.exists(img_nb))
                 doc.add_picture(img_nb, width=Inches(5))
-                os.remove(img_nb)
+                #os.remove(img_nb)
             img_p = os.path.join(img_dir, f"{sanitize_filename(commercial)}_{sanitize_filename(titre)}_puissance.png")
             plot_puissance(excel_path, sheet, commercial, img_p)
             if os.path.exists(img_p):
+                print("Vérif image PUISSANCE :", img_p, os.path.exists(img_p))
                 doc.add_picture(img_p, width=Inches(5))
-                os.remove(img_p)
+               #os.remove(img_p)
 
 def creer_rapport(commercial, data_by_part, mois, annee, jour_debut, jour_fin, output_dir, excel_path, logo_path, img_dir):
     doc = Document()
