@@ -1,4 +1,4 @@
-
+from docx.shared import RGBColor  # à importer tout en haut si ce n’est pas encore fait
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -10,6 +10,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 import os
 import unicodedata
+from docx.shared import RGBColor
 
 COMMERCIAUX_CIBLES = ['Sandra', 'Ophélie', 'Arthur', 'Grégoire', 'Tania']
 PARTIES = [
@@ -20,6 +21,12 @@ PARTIES = [
     ('Offres signées', 'offre_signee_detail', True),
     ('PDB signées', 'pdbs_signees', True)
 ]
+
+
+
+def hex_to_rgb_color(hex_color):
+    hex_color = hex_color.lstrip('#')
+    return RGBColor(int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16))
 
 def sanitize_filename(name):
     return name.replace(" ", "_").replace("/", "-")
@@ -221,7 +228,13 @@ def plot_puissance(excel_path, sheet_name, commercial, output_path):
 def ajouter_section(doc, excel_path, titre, df, graphique, commercial, mois, annee, jour_debut, jour_fin, img_dir):
     mois_nom = datetime(annee, mois, 1).strftime('%B')
     titre_complet = f"{titre} du {jour_debut} au {jour_fin} {mois_nom} {annee}"
-    doc.add_heading(titre_complet, level=2)
+  
+
+    titre_paragraph = doc.add_heading(level=2)
+    titre_run = titre_paragraph.add_run(titre_complet)
+    titre_run.bold = True
+    titre_run.font.size = Pt(14)
+    titre_run.font.color.rgb = hex_to_rgb_color("#0d07d2") # rouge ici, remplace par une autre couleur si tu 
     ajouter_statistiques_mensuelles(doc, titre, df, mois, annee)
     ajouter_tableau(doc, df, exclure=['lien'])
     doc.add_paragraph()
@@ -231,13 +244,11 @@ def ajouter_section(doc, excel_path, titre, df, graphique, commercial, mois, ann
             img_nb = os.path.join(img_dir, f"{sanitize_filename(commercial)}_{sanitize_filename(titre)}.png")
             creer_graphique_global(excel_path, sheet, commercial, img_nb)
             if os.path.exists(img_nb):
-                print("Vérif image NOMBRE :", img_nb, os.path.exists(img_nb))
                 doc.add_picture(img_nb, width=Inches(5))
                 #os.remove(img_nb)
             img_p = os.path.join(img_dir, f"{sanitize_filename(commercial)}_{sanitize_filename(titre)}_puissance.png")
             plot_puissance(excel_path, sheet, commercial, img_p)
             if os.path.exists(img_p):
-                print("Vérif image PUISSANCE :", img_p, os.path.exists(img_p))
                 doc.add_picture(img_p, width=Inches(5))
                #os.remove(img_p)
 
