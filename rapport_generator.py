@@ -84,6 +84,8 @@ def ajouter_page_de_garde(doc, nom_commercial, jour_debut, jour_fin, mois, annee
     doc._body.clear_content()
 
     section = doc.sections[0]
+    section.different_first_page_header_footer = True  # active entête/pied différent pour la 1ère page
+
     section.start_type
 
     if logo_path and os.path.exists(logo_path):
