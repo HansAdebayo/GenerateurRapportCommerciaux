@@ -215,7 +215,6 @@ def plot_puissance(excel_path, sheet_name, commercial, output_path):
     plt.close()
 
 def ajouter_section(doc, excel_path, titre, df, graphique, commercial, mois, annee, jour_debut, jour_fin, img_dir):
-    doc.add_page_break()
     mois_nom = datetime(annee, mois, 1).strftime('%B')
     titre_complet = f"{titre} du {jour_debut} au {jour_fin} {mois_nom} {annee}"
     doc.add_heading(titre_complet, level=2)
