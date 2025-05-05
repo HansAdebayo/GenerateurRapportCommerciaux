@@ -14,6 +14,7 @@ import unicodedata
 COMMERCIAUX_CIBLES = ['Sandra', 'Ophélie', 'Arthur', 'Grégoire', 'Tania']
 PARTIES = [
     ('Sites créés', 'sites_crees', True),
+    ('Sites en qualification', 'site-en-qualifiquation_actuelle', False)
     ('Offres à remettre', 'offres_a_remettre_detail', False),
     ('PDB à remettre', 'pdbs_a_remettre_detail', False),
     ('Offres signées', 'offre_signee_detail', True),
