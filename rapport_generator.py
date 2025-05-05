@@ -77,14 +77,44 @@ def charger_donnees(excel_path, mois_cible, annee_cible, jour_debut=None, jour_f
     return data_by_part
 
 def ajouter_page_de_garde(doc, nom_commercial, jour_debut, jour_fin, mois, annee, logo_path=None):
-    doc.add_heading("RAPPORT COMMERCIAL", level=0)
-    doc.add_paragraph(f"Entreprise : Watt&Co Ingénierie")
-    doc.add_paragraph(f"Commercial : {nom_commercial}")
-    doc.add_paragraph(f"Période : du {jour_debut} au {jour_fin} {datetime(annee, mois, 1).strftime('%B')} {annee}")
-    doc.add_paragraph("Contenu du rapport :")
+    section = doc.sections[0]
+    section.different_first_page_header_footer = True
+    mois_nom = datetime(annee, mois, 1).strftime('%B')
+
+    # Logo centré en haut
+    if logo_path and os.path.exists(logo_path):
+        doc.add_picture(logo_path, width=Inches(2.5))
+        last_paragraph = doc.paragraphs[-1]
+        last_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+    # Titre principal centré
+    p_title = doc.add_paragraph()
+    p_title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    run = p_title.add_run("RAPPORT COMMERCIAL")
+    run.bold = True
+    run.font.size = Pt(28)
+
+    doc.add_paragraph()  # espacement
+
+    # Informations à droite
+    info = doc.add_paragraph()
+    info.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    run = info.add_run(
+        f"Entreprise : Watt&Co Ingénierie\n"
+        f"Commercial : {nom_commercial}\n"
+        f"Période : du {jour_debut} au {jour_fin} {mois_nom} {annee}\n"
+    )
+    run.font.size = Pt(12)
+
+    doc.add_paragraph()  # espacement
+
+    # Contenu du rapport
+    doc.add_paragraph("Contenu du rapport :", style='Heading 2')
     for titre, _, _ in PARTIES:
         doc.add_paragraph(f"• {titre}", style="List Bullet")
+
     doc.add_page_break()
+
 
 
 def ajouter_logo_et_titre(doc, logo_path, nom, jour_debut, jour_fin, mois, annee):
