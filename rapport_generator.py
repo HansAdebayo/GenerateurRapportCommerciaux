@@ -180,7 +180,9 @@ def creer_graphique_global(excel_path, sheet, commercial, img_path):
     counts = df_filtre.groupby(df_filtre[col_mois]).size().reindex(range(1, 13), fill_value=0)
     months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
     plt.figure(figsize=(6, 3))
-    plt.bar(months, counts.values, color="#4F81BD")
+    bars = plt.bar(months, counts.values, color="#4F81BD")
+    for bar, val in zip(bars, counts.values):
+        plt.text(bar.get_x() + bar.get_width()/2, bar.get_height(), f"{val}", ha='center', va='bottom', fontsize=8)
     plt.title(f"Évolution mensuelle – {commercial}")
     plt.xlabel('Mois')
     plt.ylabel('Nombre')
@@ -207,6 +209,8 @@ def plot_puissance(excel_path, sheet_name, commercial, output_path):
     mois_labels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc']
     plt.figure(figsize=(6, 3))
     plt.plot(mois_labels, puissances.values, marker='o', color='green', linewidth=2)
+    for i, val in enumerate(puissances.values):
+        plt.text(i, val, f"{val:.0f}", ha='center', va='bottom', fontsize=8)
     plt.title(f"Puissance mensuelle – {commercial}")
     plt.xlabel('Mois')
     plt.ylabel('Puissance (kWc)')
