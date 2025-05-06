@@ -170,7 +170,7 @@ def ajouter_tableau(doc, df, exclure=[]):
             row_cells[i].paragraphs[0].runs[0].font.size = Pt(7)
             row_cells[i].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
 
-def creer_graphique_global(excel_path, sheet, commercial, img_path):
+def creer_graphique_global(excel_path, sheet, commercial, img_path,annee):
     df = pd.read_excel(excel_path, sheet_name=sheet)
     col_mois = detect_column(df.columns, 'mois')
     col_annee = detect_column(df.columns, 'annee')
@@ -180,7 +180,8 @@ def creer_graphique_global(excel_path, sheet, commercial, img_path):
         return
 
     df[col_mois] = df[col_mois].apply(convert_mois_to_int)
-    df_filtre = df[(df[col_annee] == datetime.now().year) & (df[col_com].str.contains(commercial, case=False, na=False))]
+    df_filtre = df[(df[col_annee] == annee) & (df[col_com].str.contains(commercial, case=False, na=False))]
+
     if df_filtre.empty:
         return
 
@@ -197,7 +198,7 @@ def creer_graphique_global(excel_path, sheet, commercial, img_path):
     plt.savefig(img_path)
     plt.close()
 
-def plot_puissance(excel_path, sheet_name, commercial, output_path):
+def plot_puissance(excel_path, sheet_name, commercial, output_path, annee):
     df = pd.read_excel(excel_path, sheet_name=sheet_name)
     col_mois = detect_column(df.columns, 'mois')
     col_annee = detect_column(df.columns, 'annee')
@@ -208,7 +209,8 @@ def plot_puissance(excel_path, sheet_name, commercial, output_path):
         return
 
     df[col_mois] = df[col_mois].apply(convert_mois_to_int)
-    df_filtre = df[(df[col_annee] == datetime.now().year) & (df[col_com].str.contains(commercial, case=False, na=False))]
+    df_filtre = df[(df[col_annee] == annee) & (df[col_com].str.contains(commercial, case=False, na=False))]
+
     if df_filtre.empty:
         return
 
@@ -248,12 +250,12 @@ def ajouter_section(doc, excel_path, titre, df, graphique, commercial, mois, ann
         sheet = next((s for t, s, g in PARTIES if t in titre), None)
         if sheet:
             img_nb = os.path.join(img_dir, f"{sanitize_filename(commercial)}_{sanitize_filename(titre)}.png")
-            creer_graphique_global(excel_path, sheet, commercial, img_nb)
+            creer_graphique_global(excel_path, sheet, commercial, img_nb,annee)
             if os.path.exists(img_nb):
                 doc.add_picture(img_nb, width=Inches(5))
                 #os.remove(img_nb)
             img_p = os.path.join(img_dir, f"{sanitize_filename(commercial)}_{sanitize_filename(titre)}_puissance.png")
-            plot_puissance(excel_path, sheet, commercial, img_p)
+            plot_puissance(excel_path, sheet, commercial, img_p, annee)
             if os.path.exists(img_p):
                 doc.add_picture(img_p, width=Inches(5))
                #os.remove(img_p)
