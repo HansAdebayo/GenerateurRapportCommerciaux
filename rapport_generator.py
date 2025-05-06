@@ -258,7 +258,7 @@ def creer_rapport(commercial, data_by_part, mois, annee, jour_debut, jour_fin, o
     ajouter_logo_et_titre(doc, logo_path, commercial, jour_debut, jour_fin, mois, annee)
     for titre, _, graphique in PARTIES:
         if commercial in data_by_part.get(titre, {}):
-            titre_complet = f"{titre} du {jour_debut} au {jour_fin} {datetime(annee, mois, 1).strftime('%B')} {annee}"
+            titre_complet = titre
             ajouter_section(doc, excel_path, titre_complet, data_by_part[titre][commercial], graphique, commercial, mois, annee, jour_debut, jour_fin, img_dir)
     os.makedirs(output_dir, exist_ok=True)
     filename = f"{output_dir}/Rapport_Commercial_{sanitize_filename(commercial)}_{mois:02d}_{annee}.docx"
