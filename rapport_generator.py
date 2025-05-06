@@ -235,6 +235,12 @@ def ajouter_section(doc, excel_path, titre, df, graphique, commercial, mois, ann
     titre_run.bold = True
     titre_run.font.size = Pt(14)
     titre_run.font.color.rgb = hex_to_rgb_color("#0d07d2") # rouge ici, remplace par une autre couleur si tu 
+    if df.empty:
+        doc.add_paragraph(f"Aucune donnée pour « {titre} » dans la période sélectionnée.", style="Intense Quote")
+        doc.add_paragraph("Année : " + str(annee)).bold = True
+        doc.add_paragraph("Mois : " + str(mois)).bold = True
+        doc.add_paragraph("Nombre de données : 0")
+        return
     ajouter_statistiques_mensuelles(doc, titre, df, mois, annee)
     ajouter_tableau(doc, df, exclure=['lien'])
     doc.add_paragraph()
@@ -256,10 +262,11 @@ def creer_rapport(commercial, data_by_part, mois, annee, jour_debut, jour_fin, o
     doc = Document()
     ajouter_page_de_garde(doc, commercial, jour_debut, jour_fin, mois, annee, logo_path)
     ajouter_logo_et_titre(doc, logo_path, commercial, jour_debut, jour_fin, mois, annee)
+    
     for titre, _, graphique in PARTIES:
-        if commercial in data_by_part.get(titre, {}):
-            titre_complet = titre
-            ajouter_section(doc, excel_path, titre_complet, data_by_part[titre][commercial], graphique, commercial, mois, annee, jour_debut, jour_fin, img_dir)
+        df = data_by_part.get(titre, {}).get(commercial, pd.DataFrame())
+        ajouter_section(doc, excel_path, titre, df, graphique, commercial, mois, annee, jour_debut, jour_fin, img_dir)
+    
     os.makedirs(output_dir, exist_ok=True)
     filename = f"{output_dir}/Rapport_Commercial_{sanitize_filename(commercial)}_{mois:02d}_{annee}.docx"
     doc.save(filename)
