@@ -28,6 +28,14 @@ with col3:
 with col4:
     jour_fin = st.number_input("📍 Jour de fin", min_value=1, max_value=31, value=31)
 
+
+selected_commerciaux = st.multiselect(
+    "👤 Choisir les commerciaux à inclure",
+    options=COMMERCIAUX_CIBLES,
+    default=COMMERCIAUX_CIBLES
+)
+
+
 if uploaded_file:
     if st.button("🚀 Générer les rapports"):
         with st.spinner("Génération des rapports en cours..."):
@@ -50,7 +58,10 @@ if uploaded_file:
 
                 data = charger_donnees(excel_path, mois, annee, jour_debut, jour_fin)
                 if data:
+
                     commerciaux = list(data[next(iter(data))].keys())
+                    commerciaux = [com for com in commerciaux if any(cible.lower() in com.lower() for cible in selected_commerciaux)]
+
                     for com in commerciaux:
                         creer_rapport(com, data, mois, annee, jour_debut, jour_fin, output_dir, excel_path, logo_path, img_dir)
 
